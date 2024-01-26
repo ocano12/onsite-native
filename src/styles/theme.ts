@@ -7,6 +7,16 @@ export const theme = {
   colors: {
     ...DefaultTheme.colors,
     primary: '#E87000',
+    text: '#312C28',
+    white: 'white',
+  },
+  font: {
+    small: 8,
+    medium: 12,
+    default: 16,
+    large: 24,
+    xlarge: 32,
+    xxl: 42,
   },
   size: {
     small: '16',
