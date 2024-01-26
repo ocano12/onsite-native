@@ -1,10 +1,8 @@
 import React from 'react';
-import { View, Text, PixelRatio } from 'react-native';
+import { View, Text } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 
 export const CreateTicketScreen: React.FC = () => {
-  const density = PixelRatio.get();
-  console.log('density', density);
   return (
     <ScreenContainer>
       <View>
