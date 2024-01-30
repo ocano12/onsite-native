@@ -9,6 +9,7 @@ export const theme = {
     primary: '#E87000',
     text: '#312C28',
     white: 'white',
+    border: '#CECFD0',
   },
   font: {
     small: 8,
@@ -17,6 +18,10 @@ export const theme = {
     large: 24,
     xlarge: 32,
     xxl: 42,
+  },
+  fontWeight: {
+    normal: '400',
+    bold: '600',
   },
   size: {
     small: '16',
