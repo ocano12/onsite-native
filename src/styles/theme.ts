@@ -1,4 +1,4 @@
-import { DefaultTheme } from '@react-navigation/native';
+import { DefaultTheme } from "@react-navigation/native";
 
 export type SizeKey = keyof typeof theme.size;
 
@@ -6,10 +6,11 @@ export const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#E87000',
-    text: '#312C28',
-    white: 'white',
-    border: '#CECFD0',
+    primary: "#E87000",
+    text: "#312C28",
+    white: "white",
+    border: "#CECFD0",
+    black: "#000",
   },
   font: {
     small: 8,
@@ -20,14 +21,14 @@ export const theme = {
     xxl: 42,
   },
   fontWeight: {
-    normal: '400',
-    bold: '600',
+    normal: "400",
+    bold: "600",
   },
   size: {
-    small: '16',
-    medium: '24',
-    large: '32',
-    xlarge: '64',
+    small: "16",
+    medium: "24",
+    large: "32",
+    xlarge: "64",
   },
 };
 
