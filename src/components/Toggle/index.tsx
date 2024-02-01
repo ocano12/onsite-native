@@ -6,6 +6,7 @@ import { theme } from "../../styles/theme";
 export interface ToggelOptions<T> {
   label: string;
   value: T;
+  active?: boolean;
 }
 export interface ToggleProps<T> {
   options: ToggelOptions<T>[];
@@ -14,7 +15,7 @@ export interface ToggleProps<T> {
 }
 
 export const Toggle = <T,>({ options, alignment = "horizontal", onValueChange }: ToggleProps<T>) => {
-  const [activeOption, setActiveOption] = useState<T | null>();
+  const [activeOption, setActiveOption] = useState<T | null>(options.find(option => option.active === true)?.value || null);
 
   const handleToggelPress = (optionValue: T) => {
     setActiveOption(optionValue);
@@ -27,9 +28,8 @@ export const Toggle = <T,>({ options, alignment = "horizontal", onValueChange }:
     <View style={{ flexDirection: "row", gap: 5 }}>
       {options.map((option, index) => {
         return (
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1 }} key={index}>
             <Pressable
-              key={index}
               onPress={() => handleToggelPress(option.value)}
               style={[
                 activeOption === option.value ? { borderColor: theme.colors.black } : { borderColor: theme.colors.border },

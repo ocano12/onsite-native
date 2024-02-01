@@ -8,7 +8,7 @@ export const CreateTicketScreen: React.FC = () => {
   const [comment, setComment] = useState<string>("");
   const [site, setSite] = useState<string>("");
   const [incident, setIncident] = useState<string>("");
-  const [emergency, setEmergancy] = useState<boolean>();
+  const [emergency, setEmergancy] = useState<string>("No");
 
   const createTicket = () => {
     const ticket = {
@@ -38,10 +38,10 @@ export const CreateTicketScreen: React.FC = () => {
               <OSText text="Emergency?" />
               <Toggle
                 options={[
-                  { label: "Yes", value: true },
-                  { label: "No", value: false },
+                  { label: "Yes", value: "Yes" },
+                  { label: "No", value: "No", active: true },
                 ]}
-                onValueChange={(value: boolean) => setEmergancy(value)}
+                onValueChange={(value: string) => setEmergancy(value)}
               />
             </View>
             <View>
