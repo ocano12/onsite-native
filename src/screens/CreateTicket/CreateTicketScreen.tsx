@@ -1,21 +1,39 @@
 import React, { useState } from "react";
 import { View, Text, Alert, TextInput } from "react-native";
 import { Button, ScreenContainer, OSText, Toggle } from "../../components";
-import { theme } from "../../styles/theme";
+import { Ticket, Incident } from "../../models/types";
 import { style } from "./styles";
+import { converToBoolean } from "../../util/convertToBoolean";
+import axios from "axios";
+
+//TODO: create ticket object and types
+//TODO: submit ticket
+//TODO: loader when a ticket is being submitted
+//TODO: input error handling and validation
+//TODO: comments limit character
+//TODO: error if ticket can't be submitted
+//TODO: clear states if ticket was successful
+//TODO: better styling for Screen
+//TODO: sub list with available options
 
 export const CreateTicketScreen: React.FC = () => {
   const [comment, setComment] = useState<string>("");
   const [site, setSite] = useState<string>("");
-  const [incident, setIncident] = useState<string>("");
+  const [incidentType, setIncident] = useState<Incident>(undefined);
   const [emergency, setEmergancy] = useState<string>("No");
 
   const createTicket = () => {
-    const ticket = {
+    const ticket: Partial<Ticket> = {
       site,
-      incident,
-      comment,
+      incidentType,
+      emergancy: converToBoolean(emergency),
     };
+
+    const result = axios.post("", ticket);
+  };
+
+  const handleIncidentInput = (text: string) => {
+    setIncident(text as Incident);
   };
 
   return (
@@ -32,7 +50,7 @@ export const CreateTicketScreen: React.FC = () => {
             </View>
             <View>
               <OSText text="Incident Type" />
-              <TextInput style={style.input} placeholder="Start typing..." onChangeText={setIncident} />
+              <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} />
             </View>
             <View>
               <OSText text="Emergency?" />
