@@ -1,40 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, Alert, TextInput } from "react-native";
 import { Button, ScreenContainer, OSText, Toggle } from "../../components";
 import { Ticket, Incident } from "../../models/types";
 import { style } from "./styles";
 import { converToBoolean } from "../../util/convertToBoolean";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import Config from "react-native-config";
 
-//TODO: create ticket object and types
-//TODO: submit ticket
-//TODO: loader when a ticket is being submitted
+//TODO: change toggle to accept what the current state is.
 //TODO: input error handling and validation
 //TODO: comments limit character
-//TODO: error if ticket can't be submitted
-//TODO: clear states if ticket was successful
+//TODO: error if ticket can't be submitted with Modal Alert might be ok now just to track
 //TODO: better styling for Screen
-//TODO: sub list with available options
+//TODO: sub list with available option
+//TODO: make api calls utils
+//TODO: create a util function for axios errors
 
 export const CreateTicketScreen: React.FC = () => {
   const [comment, setComment] = useState<string>("");
   const [site, setSite] = useState<string>("");
-  const [incidentType, setIncident] = useState<Incident>(undefined);
+  const [incidentType, setIncident] = useState<Incident>("");
   const [emergency, setEmergancy] = useState<string>("No");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const onsiteApi = Config.ONSITE_API_HOST;
 
-  const createTicket = () => {
-    const ticket: Partial<Ticket> = {
-      site,
+  //temp values
+  const siteID = 2;
+  const title = "Orlando second ticket from app";
+  const userID = 1;
+
+  const resetState = () => {
+    setComment("");
+    setSite("");
+    setIncident("");
+    setEmergancy("No");
+    setIsLoading(false);
+  };
+
+  const createTicket = async () => {
+    setIsLoading(true);
+
+    const ticket: Ticket = {
+      title,
+      status: "Open",
+      siteID,
       incidentType,
       emergancy: converToBoolean(emergency),
+      comment,
+      userID,
     };
 
-    const result = axios.post("", ticket);
+    try {
+      const response = await axios.post(onsiteApi + "/create-ticket", ticket);
+      if (response.status === 200) {
+        // Alert.alert("Ticket Created", `${response.data.id}`);
+        resetState();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        console.error(axiosError.message);
+        if (axiosError.response) {
+          Alert.alert(`Something went wrong. Try again!`);
+        } else {
+          Alert.alert("An unexpected error occurred");
+        }
+      } else {
+        // Handle non-Axios errors
+        console.error(error);
+        Alert.alert("An error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleIncidentInput = (text: string) => {
-    setIncident(text as Incident);
-  };
+  const handleSiteInput = useCallback(
+    (text: string) => {
+      setSite(text as string);
+    },
+    [setSite],
+  );
+
+  const handleIncidentInput = useCallback(
+    (text: string) => {
+      setIncident(text as Incident);
+    },
+    [setIncident],
+  );
+
+  const onEmergancyChange = useCallback((value: string) => {
+    setEmergancy(value);
+  }, []);
 
   return (
     <ScreenContainer>
@@ -46,20 +103,22 @@ export const CreateTicketScreen: React.FC = () => {
           <View>
             <View>
               <OSText text="Site" />
-              <TextInput style={style.input} placeholder="Start typing..." onChangeText={setSite} />
+              <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleSiteInput} value={site} />
             </View>
             <View>
               <OSText text="Incident Type" />
-              <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} />
+              <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} value={incidentType} />
             </View>
             <View>
               <OSText text="Emergency?" />
+
               <Toggle
                 options={[
                   { label: "Yes", value: "Yes" },
                   { label: "No", value: "No", active: true },
                 ]}
-                onValueChange={(value: string) => setEmergancy(value)}
+                onValueChange={onEmergancyChange}
+                value={emergency}
               />
             </View>
             <View>
@@ -68,7 +127,7 @@ export const CreateTicketScreen: React.FC = () => {
             </View>
           </View>
           <View>
-            <Button title="Create Ticket" onPress={createTicket} />
+            <Button title="Create Ticket" onPress={createTicket} isLoading={isLoading} />
           </View>
         </View>
       </View>

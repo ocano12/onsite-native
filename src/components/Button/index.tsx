@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, View, Text } from "react-native";
+import { Pressable, View, Text, ActivityIndicator } from "react-native";
 import { theme } from "../../styles/theme";
 import { styles } from "./Button.styles.ts";
 
@@ -8,9 +8,10 @@ export interface ButtonProps {
   disabled?: boolean;
   onPress: () => void;
   type?: "normal" | "outline";
+  isLoading?: boolean;
 }
 
-export const Button = ({ title, disabled = false, onPress, type = "normal" }: ButtonProps) => {
+export const Button = ({ title, disabled = false, onPress, type = "normal", isLoading = false }: ButtonProps) => {
   let buttonStyles;
   let buttonText;
 
@@ -26,9 +27,7 @@ export const Button = ({ title, disabled = false, onPress, type = "normal" }: Bu
   }
   return (
     <Pressable onPress={onPress}>
-      <View style={buttonStyles}>
-        <Text style={buttonText}>{title}</Text>
-      </View>
+      <View style={buttonStyles}>{isLoading ? <ActivityIndicator /> : <Text style={buttonText}>{title}</Text>}</View>
     </Pressable>
   );
 };
