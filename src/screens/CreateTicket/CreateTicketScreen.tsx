@@ -6,19 +6,21 @@ import { style } from "./styles";
 import { converToBoolean } from "../../util/convertToBoolean";
 import axios, { AxiosError } from "axios";
 import Config from "react-native-config";
-import { useGetAllSitesQuery } from "../../api/site";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../models/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+//TODO: convert searchable input fields into a component
+//TODO: search animations and transations
 //TODO: change toggle to accept what the current state is.
 //TODO: input error handling and validation
 //TODO: comments limit character
 //TODO: error if ticket can't be submitted with Modal Alert might be ok now just to track
 //TODO: better styling for Screen
-//TODO: sub list with available option
 //TODO: make api calls utils
 //TODO: create a util function for axios errors
 
-//@ts-ignore
-export const CreateTicketScreen: React.FC = ({ navigation }) => {
+export const CreateTicketScreen: React.FC = () => {
     const [comment, setComment] = useState<string>("");
     const [site, setSite] = useState<string>("");
     const [incidentType, setIncident] = useState<Incident>("");
@@ -26,6 +28,8 @@ export const CreateTicketScreen: React.FC = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const siteInputRef = useRef<TextInput>(null);
+
+    const navigation = useNavigation();
 
     //temp values
     const siteID = 2;
@@ -92,11 +96,10 @@ export const CreateTicketScreen: React.FC = ({ navigation }) => {
         [setIncident],
     );
 
-    //TODO: convert this into a component
-    //TODO: search animations and transations
     const handleSiteInputFocus = () => {
         siteInputRef.current && siteInputRef?.current.blur();
-        navigation.navigate("search");
+        //TODO: look at this low prio
+        navigation.navigate("Search" as never);
     };
 
     const onEmergancyChange = useCallback((value: string) => {

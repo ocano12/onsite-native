@@ -22,3 +22,8 @@ export interface Site {
     createdBy: number;
     modifiedBy: number;
 }
+
+export type RootStackParamList = {
+    Main: undefined;
+    Search: { data?: [] };
+};
