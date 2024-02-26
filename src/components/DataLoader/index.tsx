@@ -12,15 +12,13 @@ type DataLoaderProps = {
 export const DataLoader = ({ children }: DataLoaderProps) => {
     const { data: sites, error, isLoading } = useGetAllSitesQuery();
 
-    if (isLoading) {
-        return (
-            <ScreenContainer>
-                <Text>Loading...</Text>
-            </ScreenContainer>
-        );
-    }
-
-    console.log("sites", sites);
+    // if (isLoading) {
+    //     return (
+    //         <ScreenContainer>
+    //             <Text>Loading...</Text>
+    //         </ScreenContainer>
+    //     );
+    // }
 
     return <>{children}</>;
 };

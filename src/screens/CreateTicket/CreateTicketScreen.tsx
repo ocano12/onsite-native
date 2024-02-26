@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { View, Text, Alert, TextInput } from "react-native";
 import { Button, ScreenContainer, OSText, Toggle } from "../../components";
 import { Incident, TicketPayload } from "../../models/types";
@@ -17,12 +17,15 @@ import { useGetAllSitesQuery } from "../../api/site";
 //TODO: make api calls utils
 //TODO: create a util function for axios errors
 
-export const CreateTicketScreen: React.FC = () => {
+//@ts-ignore
+export const CreateTicketScreen: React.FC = ({ navigation }) => {
     const [comment, setComment] = useState<string>("");
     const [site, setSite] = useState<string>("");
     const [incidentType, setIncident] = useState<Incident>("");
     const [emergency, setEmergancy] = useState<string>("No");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const siteInputRef = useRef<TextInput>(null);
 
     //temp values
     const siteID = 2;
@@ -89,6 +92,13 @@ export const CreateTicketScreen: React.FC = () => {
         [setIncident],
     );
 
+    //TODO: convert this into a component
+    //TODO: search animations and transations
+    const handleSiteInputFocus = () => {
+        siteInputRef.current && siteInputRef?.current.blur();
+        navigation.navigate("search");
+    };
+
     const onEmergancyChange = useCallback((value: string) => {
         setEmergancy(value);
     }, []);
@@ -103,7 +113,7 @@ export const CreateTicketScreen: React.FC = () => {
                     <View>
                         <View>
                             <OSText text="Site" />
-                            <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleSiteInput} value={site} />
+                            <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleSiteInput} value={site} onFocus={handleSiteInputFocus} ref={siteInputRef} />
                         </View>
                         <View>
                             <OSText text="Incident Type" />
