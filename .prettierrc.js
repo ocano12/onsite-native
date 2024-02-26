@@ -4,5 +4,6 @@ module.exports = {
   bracketSpacing: true,
   singleQuote: false,
   trailingComma: "all",
-  printWidth: 300,
+  printWidth: 250,
+  tabWidth: 4,
 };
