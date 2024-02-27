@@ -20,6 +20,7 @@ export interface Item {
 //TODO: make items clickable
 //TODO: return the selected item to the other Screen
 //TODO: optional search by subtitle
+//TODO: show something when no matches found!
 export const SearchScreen = ({ route, navigation }: SearchScreenProps) => {
     const { data } = route.params;
 
