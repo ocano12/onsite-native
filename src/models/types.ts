@@ -1,3 +1,4 @@
+import React from "react";
 type Status = "Open" | "Closed" | "In Progress" | "Cancelled";
 
 export type Incident = "Interior" | "Exterior" | "Hvac" | "Landscape" | "Other" | "";
@@ -21,6 +22,12 @@ export interface Site {
     dateModified: Date;
     createdBy: number;
     modifiedBy: number;
+}
+
+export interface SearchData {
+    title: string;
+    subTitle?: string;
+    icon?: React.ReactNode;
 }
 
 export type RootStackParamList = {

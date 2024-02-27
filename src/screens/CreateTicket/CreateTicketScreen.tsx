@@ -1,14 +1,14 @@
 import React, { useState, useCallback, useRef } from "react";
 import { View, Text, Alert, TextInput } from "react-native";
 import { Button, ScreenContainer, OSText, Toggle } from "../../components";
-import { Incident, TicketPayload } from "../../models/types";
+import { Incident, SearchData, TicketPayload } from "../../models/types";
 import { style } from "./styles";
 import { converToBoolean } from "../../util/convertToBoolean";
 import axios, { AxiosError } from "axios";
 import Config from "react-native-config";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../models/types";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useGetAllSitesQuery } from "../../api/site";
+import { Icons } from "../../icons";
 
 //TODO: convert searchable input fields into a component
 //TODO: search animations and transations
@@ -30,6 +30,31 @@ export const CreateTicketScreen: React.FC = () => {
     const siteInputRef = useRef<TextInput>(null);
 
     const navigation = useNavigation();
+    // const {data: sites, error} = useGetAllSitesQuery();
+
+    //TODO:remove this
+    const sites = [
+        {
+            id: 1,
+            name: "Orlando Cano",
+            addressID: 1,
+            isResidential: true,
+            dateCreated: new Date(),
+            dateModified: new Date(),
+            createdBy: 1,
+            modifiedBy: 1,
+        },
+        {
+            id: 1,
+            name: "Miami Heat",
+            addressID: 2,
+            isResidential: false,
+            dateCreated: new Date(),
+            dateModified: new Date(),
+            createdBy: 1,
+            modifiedBy: 1,
+        },
+    ];
 
     //temp values
     const siteID = 2;
@@ -57,6 +82,7 @@ export const CreateTicketScreen: React.FC = () => {
             userID,
         };
 
+        //TODO: this might change now that im using RTK so that the store stays synced
         try {
             const response = await axios.post(Config.ONSITE_API_HOST + "/create-ticket", ticket);
             if (response.status === 200) {
@@ -98,8 +124,16 @@ export const CreateTicketScreen: React.FC = () => {
 
     const handleSiteInputFocus = () => {
         siteInputRef.current && siteInputRef?.current.blur();
+
+        const data: SearchData[] = sites.map(site => ({
+            title: site.name,
+            icon: site.isResidential ? <Icons name="home" fill={"black"} size="medium" /> : <Icons name="home" fill={"black"} size="medium" />,
+        }));
         //TODO: look at this low prio
-        navigation.navigate("Search" as never);
+        //@ts-ignore
+        navigation.navigate("Search" as never, {
+            data,
+        });
     };
 
     const onEmergancyChange = useCallback((value: string) => {
