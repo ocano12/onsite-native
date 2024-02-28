@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useRef } from "react";
 import { View, Text, Alert, TextInput } from "react-native";
-import { Button, ScreenContainer, OSText, Toggle } from "../../components";
-import { Incident, SearchData, TicketPayload } from "../../models/types";
-import { style } from "./styles";
-import { converToBoolean } from "../../util/convertToBoolean";
+import { Button, ScreenContainer, OSText, Toggle, OSTextInput } from "../../components";
+import { Incident, SearchData, TicketPayload, Site } from "../../models/types";
 import axios, { AxiosError } from "axios";
 import Config from "react-native-config";
 import { useNavigation } from "@react-navigation/native";
 import { useGetAllSitesQuery } from "../../api/site";
+import { converToBoolean } from "../../util/convertToBoolean";
+import { theme } from "../../styles/theme";
+import { style } from "./styles";
 import { Icons } from "../../icons";
 
 //TODO: convert searchable input fields into a component
@@ -22,7 +23,7 @@ import { Icons } from "../../icons";
 
 export const CreateTicketScreen: React.FC = () => {
     const [comment, setComment] = useState<string>("");
-    const [site, setSite] = useState<string>("");
+    const [site, setSite] = useState<Site>();
     const [incidentType, setIncident] = useState<Incident>("");
     const [emergency, setEmergancy] = useState<string>("No");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,7 +34,7 @@ export const CreateTicketScreen: React.FC = () => {
     // const {data: sites, error} = useGetAllSitesQuery();
 
     //TODO:remove this
-    const sites = [
+    const sites: Site[] = [
         {
             id: 1,
             name: "Orlando Cano",
@@ -45,7 +46,7 @@ export const CreateTicketScreen: React.FC = () => {
             modifiedBy: 1,
         },
         {
-            id: 1,
+            id: 2,
             name: "Miami Heat",
             addressID: 2,
             isResidential: false,
@@ -63,7 +64,7 @@ export const CreateTicketScreen: React.FC = () => {
 
     const resetState = () => {
         setComment("");
-        setSite("");
+        // setSite("");
         setIncident("");
         setEmergancy("No");
         setIsLoading(false);
@@ -108,12 +109,12 @@ export const CreateTicketScreen: React.FC = () => {
         }
     };
 
-    const handleSiteInput = useCallback(
-        (text: string) => {
-            setSite(text as string);
-        },
-        [setSite],
-    );
+    // const handleSiteInput = useCallback(
+    //     (text: string) => {
+    //         setSite(text as string);
+    //     },
+    //     [setSite],
+    // );
 
     const handleIncidentInput = useCallback(
         (text: string) => {
@@ -126,19 +127,25 @@ export const CreateTicketScreen: React.FC = () => {
         siteInputRef.current && siteInputRef?.current.blur();
 
         const data: SearchData[] = sites.map(site => ({
+            id: site.id,
             title: site.name,
-            icon: site.isResidential ? <Icons name="home" fill={"black"} size="medium" /> : <Icons name="home" fill={"black"} size="medium" />,
+            icon: site.isResidential ? <Icons name="home" fill={theme.colors.primary} size="xlarge" /> : <Icons name="building" fill={theme.colors.primary} size="xlarge" />,
         }));
         //TODO: look at this low prio
         //@ts-ignore
         navigation.navigate("Search" as never, {
             data,
+            onItemSelect: (siteID: number) => {
+                setSite(sites.find(site => site.id === siteID));
+            },
         });
     };
 
     const onEmergancyChange = useCallback((value: string) => {
         setEmergancy(value);
     }, []);
+
+    //TODO; if site and incident are selected should  ichange the UI to show they are selected? could be
 
     return (
         <ScreenContainer>
@@ -150,11 +157,11 @@ export const CreateTicketScreen: React.FC = () => {
                     <View>
                         <View>
                             <OSText text="Site" />
-                            <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleSiteInput} value={site} onFocus={handleSiteInputFocus} ref={siteInputRef} />
+                            <OSTextInput style={style.input} placeholder="Start typing..." value={site?.name} onFocus={handleSiteInputFocus} ref={siteInputRef} />
                         </View>
                         <View>
                             <OSText text="Incident Type" />
-                            <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} value={incidentType} />
+                            <OSTextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} value={incidentType} />
                         </View>
                         <View>
                             <OSText text="Emergency?" />

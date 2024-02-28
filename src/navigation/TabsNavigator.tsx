@@ -9,21 +9,21 @@ export const MyTabs = () => {
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ color, size }) => <Icons name="home" fill={color} size="medium" />,
+                    tabBarIcon: ({ color, size }) => <Icons name="home" fill={color} size="large" />,
                 }}
                 name="Home"
                 component={CreateTicketScreen}
             />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ color }) => <Icons name="ticket" fill={color} size="medium" />,
+                    tabBarIcon: ({ color }) => <Icons name="ticket" fill={color} size="large" />,
                 }}
                 name="Ticket"
                 component={TicketScreen}
             />
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ color }) => <Icons name="setting" fill={color} size="medium" />,
+                    tabBarIcon: ({ color }) => <Icons name="setting" fill={color} size="large" />,
                 }}
                 name="Setting"
                 component={SettingScreen}

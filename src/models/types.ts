@@ -25,9 +25,10 @@ export interface Site {
 }
 
 export interface SearchData {
+    id: number;
     title: string;
-    subTitle?: string;
     icon?: React.ReactNode;
+    subTitle?: string;
 }
 
 export type RootStackParamList = {

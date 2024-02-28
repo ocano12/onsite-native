@@ -1,9 +1,8 @@
-import React from "React";
-import { TextInput } from "react-native";
-
-export interface OSTextInputProps {}
+import React, { ReactElement } from "react";
+import { TextInput, TextInputProps } from "react-native";
+import { styles } from "./styles";
 
 //TODO; finish up here
-export const OSTextInput = ({ onChangeText, value, onFocus, ref }) => {
-    return <TextInput style={style.input} placeholder="Start typing..." onChangeText={handleSiteInput} value={site} onFocus={handleSiteInputFocus} ref={siteInputRef} />;
-};
+export const OSTextInput = React.forwardRef<TextInput, TextInputProps>((props, ref) => {
+    return <TextInput style={styles.input} ref={ref} {...props} />;
+});
