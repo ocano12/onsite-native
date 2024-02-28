@@ -17,10 +17,6 @@ export interface Item {
     icon?: ReactNode;
 }
 
-//TODO: styles for item list
-//TODO: make textInput into a component
-//TODO: make items clickable
-//TODO: return the selected item to the other Screen
 //TODO: optional search by subtitle
 //TODO: show something when no matches found!
 //TODO: make cancel up top with the search bar

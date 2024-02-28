@@ -11,6 +11,7 @@ import { theme } from "../../styles/theme";
 import { style } from "./styles";
 import { Icons } from "../../icons";
 
+//TODO; update create ticket with query
 //TODO: convert searchable input fields into a component
 //TODO: search animations and transations
 //TODO: change toggle to accept what the current state is.
