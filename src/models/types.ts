@@ -13,15 +13,28 @@ export interface TicketPayload {
     userID: number;
 }
 
+export interface Ticket {
+    id: number;
+    title: string;
+    status: Status;
+    emergancy: boolean;
+    site_id: number;
+    incident_type: Incident;
+    comment_id?: number;
+    assigned_id?: number;
+    created_by: number;
+    modified_by: number;
+}
+
 export interface Site {
     id: number;
     name: string;
-    addressID: number;
     isResidential: boolean;
-    dateCreated: Date;
-    dateModified: Date;
-    createdBy: number;
-    modifiedBy: number;
+    address_1: string;
+    address_2?: string;
+    city: string;
+    state: string;
+    zip_code: string;
 }
 
 export interface SearchData {

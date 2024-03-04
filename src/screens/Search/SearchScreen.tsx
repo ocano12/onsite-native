@@ -31,14 +31,14 @@ export const SearchScreen = ({ route, navigation }: SearchScreenProps) => {
         navigation.goBack();
     };
 
-    const Item = ({ id, title, icon }: Item) => {
+    const Item = ({ id, title, icon, subTitle }: Item) => {
         return (
             <Pressable onPress={() => handleSelect(id)}>
                 <View style={SearchScreenStyles.item}>
                     {icon && <View style={{ flex: 1 }}>{icon}</View>}
                     <View style={{ flex: 5 }}>
-                        <OSText text={title} size="large" fontWeight="bold" />
-                        <OSText text="3181 sw 85 ave, Miami, FL, 33155" size="default" fontWeight="bold" />
+                        <OSText text={title} size="default" fontWeight="bold" />
+                        <OSText text={subTitle || ""} size="medium" fontWeight="bold" />
                     </View>
                 </View>
             </Pressable>
@@ -56,7 +56,7 @@ export const SearchScreen = ({ route, navigation }: SearchScreenProps) => {
     return (
         <ScreenContainer>
             <OSTextInput placeholder="Start typing..." onChangeText={handleFilterData} value={searchText} />
-            {!data || !data.length ? <Text>Something went wrong!</Text> : <FlatList data={filteredData} renderItem={({ item }) => <Item id={item.id} title={item.title} icon={item?.icon} />} />}
+            {!data || !data.length ? <Text>Something went wrong!</Text> : <FlatList data={filteredData} renderItem={({ item }) => <Item id={item.id} title={item.title} icon={item?.icon} subTitle={item.subTitle} />} />}
             <Button title="Cancel" onPress={() => navigation.goBack()} type="outline" />
         </ScreenContainer>
     );

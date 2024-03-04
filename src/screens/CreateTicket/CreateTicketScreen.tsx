@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef } from "react";
-import { View, Text, Alert, TextInput } from "react-native";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { View, Text, Alert, TextInput, Modal } from "react-native";
 import { Button, ScreenContainer, OSText, Toggle, OSTextInput } from "../../components";
 import { Incident, SearchData, TicketPayload, Site } from "../../models/types";
 import axios, { AxiosError } from "axios";
@@ -10,8 +10,9 @@ import { converToBoolean } from "../../util/convertToBoolean";
 import { theme } from "../../styles/theme";
 import { style } from "./styles";
 import { Icons } from "../../icons";
+import { useCreateTicketMutation } from "../../api/tickets";
 
-//TODO; update create ticket with query
+//TODO: use Formink for validations.
 //TODO: convert searchable input fields into a component
 //TODO: search animations and transations
 //TODO: change toggle to accept what the current state is.
@@ -21,101 +22,61 @@ import { Icons } from "../../icons";
 //TODO: better styling for Screen
 //TODO: make api calls utils
 //TODO: create a util function for axios errors
+//TODO: error ui if something goes wrong with a Retry
 
 export const CreateTicketScreen: React.FC = () => {
     const [comment, setComment] = useState<string>("");
-    const [site, setSite] = useState<Site>();
+    const [title, setTitle] = useState<string>("");
+    const [selectedSite, setSelectedSite] = useState<Site | undefined>();
     const [incidentType, setIncident] = useState<Incident>("");
     const [emergency, setEmergancy] = useState<string>("No");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const siteInputRef = useRef<TextInput>(null);
 
     const navigation = useNavigation();
-    // const {data: sites, error} = useGetAllSitesQuery();
 
-    //TODO:remove this
-    const sites: Site[] = [
-        {
-            id: 1,
-            name: "Orlando Cano",
-            addressID: 1,
-            isResidential: true,
-            dateCreated: new Date(),
-            dateModified: new Date(),
-            createdBy: 1,
-            modifiedBy: 1,
-        },
-        {
-            id: 2,
-            name: "Miami Heat",
-            addressID: 2,
-            isResidential: false,
-            dateCreated: new Date(),
-            dateModified: new Date(),
-            createdBy: 1,
-            modifiedBy: 1,
-        },
-    ];
+    const { data: sites, error } = useGetAllSitesQuery();
+    const [createTicket, { isLoading }] = useCreateTicketMutation();
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert("Something went wrong");
+        }
+    }, [error]);
 
     //temp values
-    const siteID = 2;
-    const title = "Orlando second ticket from app";
     const userID = 1;
 
     const resetState = () => {
         setComment("");
-        // setSite("");
         setIncident("");
         setEmergancy("No");
-        setIsLoading(false);
     };
 
-    const createTicket = async () => {
-        setIsLoading(true);
-
+    const handleCreateTicket = async () => {
         const ticket: TicketPayload = {
             title,
             status: "Open",
-            siteID,
+            siteID: selectedSite?.id,
             incidentType,
             emergancy: converToBoolean(emergency),
             comment,
             userID,
         };
 
-        //TODO: this might change now that im using RTK so that the store stays synced
         try {
-            const response = await axios.post(Config.ONSITE_API_HOST + "/create-ticket", ticket);
-            if (response.status === 200) {
-                // Alert.alert("Ticket Created", `${response.data.id}`);
-                resetState();
-            }
+            console.log(isLoading);
+            await createTicket(ticket).unwrap();
+            Alert.alert("Ticket saved Successfully");
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError;
-                console.error(axiosError.message);
-                if (axiosError.response) {
-                    Alert.alert(`Something went wrong. Try again!`);
-                } else {
-                    Alert.alert("An unexpected error occurred");
-                }
-            } else {
-                // Handle non-Axios errors
-                console.error(error);
-                Alert.alert("An error occurred");
-            }
-        } finally {
-            setIsLoading(false);
+            console.log(error);
+            Alert.alert("Failed to Save Ticket");
         }
     };
 
-    // const handleSiteInput = useCallback(
-    //     (text: string) => {
-    //         setSite(text as string);
-    //     },
-    //     [setSite],
-    // );
+    const handleTitleInput = (text: string) => {
+        setTitle(text);
+    };
 
     const handleIncidentInput = useCallback(
         (text: string) => {
@@ -130,6 +91,7 @@ export const CreateTicketScreen: React.FC = () => {
         const data: SearchData[] = sites.map(site => ({
             id: site.id,
             title: site.name,
+            subTitle: `${site.address_1}, ${site.city} ${site.state}, ${site.zip_code}`,
             icon: site.isResidential ? <Icons name="home" fill={theme.colors.primary} size="xlarge" /> : <Icons name="building" fill={theme.colors.primary} size="xlarge" />,
         }));
         //TODO: look at this low prio
@@ -137,7 +99,7 @@ export const CreateTicketScreen: React.FC = () => {
         navigation.navigate("Search" as never, {
             data,
             onItemSelect: (siteID: number) => {
-                setSite(sites.find(site => site.id === siteID));
+                setSelectedSite(sites?.find(site => site.id === siteID));
             },
         });
     };
@@ -149,43 +111,49 @@ export const CreateTicketScreen: React.FC = () => {
     //TODO; if site and incident are selected should  ichange the UI to show they are selected? could be
 
     return (
-        <ScreenContainer>
-            <View style={{ flex: 1, padding: 11 }}>
-                <View style={{ marginBottom: 10 }}>
-                    <OSText size="xlarge" fontWeight="bold" text="Create Ticket" lineHeight={50} />
-                </View>
-                <View>
+        <>
+            <ScreenContainer>
+                <View style={{ flex: 1, padding: 11 }}>
+                    <View style={{ marginBottom: 10 }}>
+                        <OSText size="xlarge" fontWeight="bold" text="Create Ticket" lineHeight={50} />
+                    </View>
                     <View>
                         <View>
-                            <OSText text="Site" />
-                            <OSTextInput style={style.input} placeholder="Start typing..." value={site?.name} onFocus={handleSiteInputFocus} ref={siteInputRef} />
-                        </View>
-                        <View>
-                            <OSText text="Incident Type" />
-                            <OSTextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} value={incidentType} />
-                        </View>
-                        <View>
-                            <OSText text="Emergency?" />
+                            <View>
+                                <OSText text="Title" />
+                                <OSTextInput style={style.input} placeholder="Start typing..." value={title} onChangeText={handleTitleInput} />
+                            </View>
+                            <View>
+                                <OSText text="Site" />
+                                <OSTextInput style={style.input} placeholder="Start typing..." value={selectedSite?.name} onFocus={handleSiteInputFocus} ref={siteInputRef} />
+                            </View>
+                            <View>
+                                <OSText text="Incident Type" />
+                                <OSTextInput style={style.input} placeholder="Start typing..." onChangeText={handleIncidentInput} value={incidentType} />
+                            </View>
+                            <View>
+                                <OSText text="Emergency?" />
 
-                            <Toggle
-                                options={[
-                                    { label: "Yes", value: "Yes" },
-                                    { label: "No", value: "No", active: true },
-                                ]}
-                                onValueChange={onEmergancyChange}
-                                value={emergency}
-                            />
+                                <Toggle
+                                    options={[
+                                        { label: "Yes", value: "Yes" },
+                                        { label: "No", value: "No", active: true },
+                                    ]}
+                                    onValueChange={onEmergancyChange}
+                                    value={emergency}
+                                />
+                            </View>
+                            <View>
+                                <OSText text="Comments" />
+                                <TextInput multiline placeholder="Add a comment..." numberOfLines={4} onChangeText={setComment} value={comment} style={[style.area, { marginBottom: 20 }]} />
+                            </View>
                         </View>
                         <View>
-                            <OSText text="Comments" />
-                            <TextInput multiline placeholder="Add a comment..." numberOfLines={4} onChangeText={setComment} value={comment} style={[style.area, { marginBottom: 20 }]} />
+                            <Button title="Create Ticket" onPress={handleCreateTicket} isLoading={isLoading} />
                         </View>
                     </View>
-                    <View>
-                        <Button title="Create Ticket" onPress={createTicket} isLoading={isLoading} />
-                    </View>
                 </View>
-            </View>
-        </ScreenContainer>
+            </ScreenContainer>
+        </>
     );
 };
