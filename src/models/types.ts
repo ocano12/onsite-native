@@ -6,9 +6,9 @@ export type Incident = "Interior" | "Exterior" | "Hvac" | "Landscape" | "Other" 
 export interface TicketPayload {
     title: string;
     status: Status;
-    emergancy: boolean;
+    emergency: boolean;
     siteID: number;
-    incidentType: Incident;
+    incidentType: string;
     comment?: string;
     userID: number;
 }
@@ -17,9 +17,9 @@ export interface Ticket {
     id: number;
     title: string;
     status: Status;
-    emergancy: boolean;
+    emergency: boolean;
     site_id: number;
-    incident_type: Incident;
+    incident_type: string;
     comment_id?: number;
     assigned_id?: number;
     created_by: number;
@@ -48,3 +48,11 @@ export type RootStackParamList = {
     Main: undefined;
     Search: { data?: [] };
 };
+
+export interface CreateTicketForm {
+    title: string;
+    siteID: number;
+    incidentType: string;
+    emergency: boolean;
+    comment: string;
+}

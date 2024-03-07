@@ -14,7 +14,7 @@ export interface ButtonProps {
 export const Button = ({ title, disabled = false, onPress, type = "normal", isLoading = false }: ButtonProps) => {
     let buttonStyles;
     let buttonText;
-    console.log(isLoading);
+
     switch (type) {
         case "outline":
             buttonStyles = styles.outlineContainer;
@@ -27,7 +27,7 @@ export const Button = ({ title, disabled = false, onPress, type = "normal", isLo
     }
     return (
         <Pressable onPress={onPress}>
-            <View style={buttonStyles}>{isLoading ? <ActivityIndicator /> : <Text style={buttonText}>{title}</Text>}</View>
+            <View style={buttonStyles}>{isLoading ? <ActivityIndicator color={theme.colors.white} size="large" /> : <Text style={buttonText}>{title}</Text>}</View>
         </Pressable>
     );
 };
