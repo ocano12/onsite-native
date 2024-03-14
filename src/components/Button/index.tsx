@@ -27,7 +27,7 @@ export const Button = ({ title, disabled = false, onPress, type = "normal", isLo
     }
     return (
         <Pressable onPress={onPress}>
-            <View style={buttonStyles}>{isLoading ? <ActivityIndicator color={theme.colors.white} size="large" /> : <Text style={buttonText}>{title}</Text>}</View>
+            <View style={[buttonStyles, disabled ? { opacity: 0.5 } : null]}>{isLoading ? <ActivityIndicator color={theme.colors.white} size="large" /> : <Text style={buttonText}>{title}</Text>}</View>
         </Pressable>
     );
 };

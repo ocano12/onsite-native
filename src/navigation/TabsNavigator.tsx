@@ -11,7 +11,7 @@ export const MyTabs = () => {
                 options={{
                     tabBarIcon: ({ color, size }) => <Icons name="home" fill={color} size="large" />,
                 }}
-                name="Home"
+                name="CreateTicket"
                 component={CreateTicketScreen}
             />
             <Tab.Screen

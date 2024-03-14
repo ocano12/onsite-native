@@ -1,4 +1,5 @@
 import React from "react";
+import { RouteProp } from "@react-navigation/native";
 type Status = "Open" | "Closed" | "In Progress" | "Cancelled";
 
 export type Incident = "Interior" | "Exterior" | "Hvac" | "Landscape" | "Other" | "";
@@ -40,7 +41,7 @@ export interface Site {
 export interface SearchData {
     id: number;
     title: string;
-    icon?: React.ReactNode;
+    icon?: string;
     subTitle?: string;
 }
 
@@ -51,8 +52,15 @@ export type RootStackParamList = {
 
 export interface CreateTicketForm {
     title: string;
-    siteID: number;
     incidentType: string;
     emergency: boolean;
     comment: string;
 }
+
+///SCREEN TYPES
+
+export type CreateScreenStackProp = {
+    CreateTicket: { id: number }; // Replace 'YourScreenName' with the actual name of your screen
+};
+
+export type CreateScreenRouteProp = RouteProp<CreateScreenStackProp, "CreateTicket">;
