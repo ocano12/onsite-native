@@ -8,9 +8,9 @@ import { CreateTicketSchema } from "../../validations";
 import { theme } from "../../styles/theme";
 import { style } from "./styles";
 import { useCreateTicketMutation } from "../../api/tickets";
-import { Formik, useFormikContext } from "formik";
 import { isEmpty } from "lodash";
-import Config from "react-native-config";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 //TODO: form loading states when submitting after reset it stayed submitting.
 //TODO: convert searchable input fields into a component
@@ -20,6 +20,7 @@ import Config from "react-native-config";
 //TODO: error if ticket can't be submitted with Modal Alert might be ok now just to track
 //TODO: better styling for Screen
 //TODO: error ui if something goes wrong with a Retry
+//TODO: refactor Controller so its an easier component to write.
 
 export const CreateTicketScreen: React.FC = () => {
     const siteInputRef = useRef<TextInput>(null);
@@ -27,11 +28,26 @@ export const CreateTicketScreen: React.FC = () => {
     const { data: sites, error } = useGetAllSitesQuery();
     const [createTicket, { isLoading }] = useCreateTicketMutation();
 
+    const defaultValues = {
+        title: "",
+        siteName: "",
+        incidentType: "",
+        emergency: false,
+        comment: "",
+    };
+
+    const {
+        control,
+        handleSubmit,
+        setValue,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<CreateTicketForm>({
+        defaultValues: defaultValues,
+        resolver: yupResolver(CreateTicketSchema),
+    });
+
     const { params } = useRoute<CreateScreenRouteProp>();
-
-    console.log(Config.ONSITE_API_HOST);
-
-    let selectedSiteName: string;
 
     // TODO: check this
     useEffect(() => {
@@ -40,10 +56,16 @@ export const CreateTicketScreen: React.FC = () => {
         }
     }, [error]);
 
+    useEffect(() => {
+        params?.id && setValue("siteName", sites?.find(site => site.id === params?.id)?.name ?? "", { shouldValidate: true });
+    }, [params?.id]);
+
     //temp values
     const userID = 1;
 
-    const handleCreateTicket = async ({ title, incidentType, emergency, comment }: CreateTicketForm) => {
+    const onSubmit = async (data: CreateTicketForm) => {
+        const { title, incidentType, emergency, comment } = data;
+
         const ticket: TicketPayload = {
             title,
             status: "Open",
@@ -53,10 +75,10 @@ export const CreateTicketScreen: React.FC = () => {
             comment,
             userID,
         };
-
         try {
             await createTicket(ticket).unwrap();
             Alert.alert("Ticket saved Successfully");
+            reset(defaultValues);
         } catch (error) {
             console.log(error);
             Alert.alert("Failed to Save Ticket");
@@ -84,67 +106,62 @@ export const CreateTicketScreen: React.FC = () => {
         });
     }, [siteInputRef, sites, navigation, params?.id]);
 
-    //TODO; if site and incident are selected should  ichange the UI to show they are selected? could be
+    console.log(isSubmitting);
 
+    //TODO; if site and incident are selected should  ichange the UI to show they are selected? could be
     return (
         <ScreenContainer>
             <View style={{ flex: 1, padding: 11 }}>
                 <View style={{ marginBottom: 10 }}>
                     <OSText size="xlarge" fontWeight="bold" text="Create Ticket" lineHeight={50} />
                 </View>
-                <Formik
-                    initialValues={{ title: "", siteName: "", incidentType: "", emergency: false, comment: "" }}
-                    validationSchema={CreateTicketSchema}
-                    validateOnBlur={false}
-                    onSubmit={(values, { resetForm }) => {
-                        handleCreateTicket(values);
-                        resetForm();
-                    }}>
-                    {({ handleChange, handleSubmit, setFieldValue, values, errors, isSubmitting, touched }) => {
-                        //TODO: look at this later...
-                        useEffect(() => {
-                            setFieldValue("siteName", sites?.find(site => site.id === params?.id)?.name ?? "");
-                        }, [params?.id]);
-                        return (
-                            <>
-                                {console.log("errors = ", errors)}
-                                {console.log("touched =", touched)}
-                                {/* {console.log(values)}r */}
-                                <View>
-                                    <OSText text="Title" />
-                                    <OSTextInput style={style.input} placeholder="Start typing..." value={values.title} onChangeText={handleChange("title")} />
-                                </View>
-                                <View>
-                                    <OSText text="Site" />
-                                    <OSTextInput style={style.input} placeholder="Start typing..." value={values.siteName} onFocus={() => handleSiteInputFocus()} ref={siteInputRef} />
-                                </View>
-                                <View>
-                                    <OSText text="Incident Type" />
-                                    <OSTextInput style={style.input} placeholder="Start typing..." onChangeText={handleChange("incidentType")} value={values.incidentType} />
-                                </View>
-                                <View>
-                                    <OSText text="Emergency?" />
-
-                                    <Toggle
-                                        options={[
-                                            { label: "Yes", value: true },
-                                            { label: "No", value: false },
-                                        ]}
-                                        onValueChange={(value: boolean) => setFieldValue("emergency", value)}
-                                        value={values.emergency as boolean}
-                                    />
-                                </View>
-                                <View>
-                                    <OSText text="Comments" />
-                                    <TextInput multiline placeholder="Add a comment..." numberOfLines={4} onChangeText={handleChange("comment")} value={values.comment} style={[style.area, { marginBottom: 20 }]} />
-                                </View>
-                                <View>
-                                    <Button title="Create Ticket" onPress={handleSubmit} isLoading={isSubmitting} disabled={!isEmpty(errors)} />
-                                </View>
-                            </>
-                        );
-                    }}
-                </Formik>
+                <View>
+                    <OSText text="Title" />
+                    <Controller name="title" control={control} render={({ field: { onChange, value } }) => <OSTextInput placeholder="Start typing..." value={value} onChangeText={onChange} error={errors.title} />} />
+                </View>
+                <View>
+                    <OSText text="Site" />
+                    <Controller name="siteName" control={control} render={({ field: { value } }) => <OSTextInput placeholder="Start typing..." value={value} onFocus={() => handleSiteInputFocus()} ref={siteInputRef} error={errors.siteName} />} />
+                </View>
+                <View>
+                    <OSText text="Incident Type" />
+                    <Controller name="incidentType" control={control} render={({ field: { onChange, value } }) => <OSTextInput placeholder="Start typing..." onChangeText={onChange} value={value} error={errors.incidentType} />} />
+                    {/* */}
+                </View>
+                <View>
+                    <OSText text="Emergency?" />
+                    <Controller
+                        name="emergency"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <Toggle
+                                options={[
+                                    { label: "Yes", value: true },
+                                    { label: "No", value: false },
+                                ]}
+                                onValueChange={onChange}
+                                value={value}
+                            />
+                        )}
+                    />
+                    {/*
+                     */}
+                </View>
+                <View>
+                    {/* TODO: make the comments be able to scoll so it doesnt push down the page */}
+                    <OSText text="Comments" />
+                    <Controller
+                        name="comment"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <OSTextInput multiline placeholder="Add a comment..." numberOfLines={4} maxLength={255} onChangeText={onChange} value={value} style={[style.area, { marginBottom: 20 }]} error={errors.comment} scrollEnabled />
+                        )}
+                    />
+                    {/*  */}
+                </View>
+                <View>
+                    <Button title="Create Ticket" onPress={handleSubmit(onSubmit)} disabled={!isEmpty(errors)} isLoading={isSubmitting} />
+                </View>
             </View>
         </ScreenContainer>
     );
