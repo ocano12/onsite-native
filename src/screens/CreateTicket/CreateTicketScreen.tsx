@@ -10,6 +10,7 @@ import { style } from "./styles";
 import { useCreateTicketMutation } from "../../api/tickets";
 import { Formik, useFormikContext } from "formik";
 import { isEmpty } from "lodash";
+import Config from "react-native-config";
 
 //TODO: form loading states when submitting after reset it stayed submitting.
 //TODO: convert searchable input fields into a component
@@ -28,14 +29,16 @@ export const CreateTicketScreen: React.FC = () => {
 
     const { params } = useRoute<CreateScreenRouteProp>();
 
+    console.log(Config.ONSITE_API_HOST);
+
     let selectedSiteName: string;
 
-    //TODO: check this
-    // useEffect(() => {
-    //     if (error) {
-    //         Alert.alert("Something went wrong");
-    //     }
-    // }, [error]);
+    // TODO: check this
+    useEffect(() => {
+        if (error) {
+            Alert.alert("Something went wrong");
+        }
+    }, [error]);
 
     //temp values
     const userID = 1;
@@ -61,6 +64,7 @@ export const CreateTicketScreen: React.FC = () => {
     };
 
     const handleSiteInputFocus = useCallback(() => {
+        console.log(sites);
         if (!sites) {
             return;
         }
@@ -78,7 +82,7 @@ export const CreateTicketScreen: React.FC = () => {
         navigation.navigate("Search" as never, {
             data,
         });
-    }, [siteInputRef, sites, navigation, params?.id]); // Dependencies
+    }, [siteInputRef, sites, navigation, params?.id]);
 
     //TODO; if site and incident are selected should  ichange the UI to show they are selected? could be
 
@@ -92,19 +96,19 @@ export const CreateTicketScreen: React.FC = () => {
                     initialValues={{ title: "", siteName: "", incidentType: "", emergency: false, comment: "" }}
                     validationSchema={CreateTicketSchema}
                     validateOnBlur={false}
-                    validateOnChange={false}
                     onSubmit={(values, { resetForm }) => {
                         handleCreateTicket(values);
                         resetForm();
                     }}>
-                    {({ handleChange, handleSubmit, setFieldValue, values, errors, isSubmitting }) => {
+                    {({ handleChange, handleSubmit, setFieldValue, values, errors, isSubmitting, touched }) => {
                         //TODO: look at this later...
                         useEffect(() => {
                             setFieldValue("siteName", sites?.find(site => site.id === params?.id)?.name ?? "");
                         }, [params?.id]);
                         return (
                             <>
-                                {console.log(errors)}
+                                {console.log("errors = ", errors)}
+                                {console.log("touched =", touched)}
                                 {/* {console.log(values)}r */}
                                 <View>
                                     <OSText text="Title" />
@@ -135,7 +139,7 @@ export const CreateTicketScreen: React.FC = () => {
                                     <TextInput multiline placeholder="Add a comment..." numberOfLines={4} onChangeText={handleChange("comment")} value={values.comment} style={[style.area, { marginBottom: 20 }]} />
                                 </View>
                                 <View>
-                                    <Button title="Create Ticket" onPress={handleSubmit} isLoading={isSubmitting} />
+                                    <Button title="Create Ticket" onPress={handleSubmit} isLoading={isSubmitting} disabled={!isEmpty(errors)} />
                                 </View>
                             </>
                         );

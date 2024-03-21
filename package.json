@@ -7,7 +7,7 @@
     "ios": "react-native run-ios",
     "ios-15": "react-native run-ios --simulator='iPhone 15'",
     "lint": "eslint .",
-    "start": "react-native start",
+    "start": "react-native start --reset-cache",
     "test": "jest"
   },
   "dependencies": {
