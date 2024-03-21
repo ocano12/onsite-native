@@ -2,11 +2,22 @@ import { StyleSheet } from "react-native";
 import { theme } from "../../styles/theme";
 
 export const styles = StyleSheet.create({
-    input: {
-        padding: 9,
-        borderColor: theme.colors.border,
+    base: {
         borderRadius: 4,
         borderWidth: 1,
-        marginBottom: 15, // Add some bottom margin to each input
+        padding: 10,
+    },
+    input: {
+        borderColor: theme.colors.border,
+    },
+    error: {
+        borderColor: theme.colors.error,
+    },
+
+    errorMessage: {
+        marginTop: 5,
+        fontSize: theme.font.medium,
+        marginBottom: 10,
+        color: theme.colors.error,
     },
 });

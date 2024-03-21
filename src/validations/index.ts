@@ -2,9 +2,9 @@ import React from "react";
 import * as Yup from "yup";
 
 export const CreateTicketSchema = Yup.object().shape({
-    title: Yup.string().required("Required!"),
-    siteName: Yup.string().required("Required!"),
-    incidentType: Yup.string().required("Required!"),
+    title: Yup.string().required("Title is required!"),
+    siteName: Yup.string().required("Site is required!"),
+    incidentType: Yup.string().required("Inicden type is required!"),
     emergency: Yup.boolean().default(false),
-    comments: Yup.string().max(255, "Too Long!").optional(),
+    comment: Yup.string().max(255, "Max characters is 255").optional(),
 });

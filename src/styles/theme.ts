@@ -11,6 +11,7 @@ export const theme = {
         white: "white",
         border: "#CECFD0",
         black: "#000",
+        error: "#cc0000",
     },
     font: {
         small: 8,

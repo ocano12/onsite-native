@@ -52,9 +52,10 @@ export type RootStackParamList = {
 
 export interface CreateTicketForm {
     title: string;
+    siteName: string;
     incidentType: string;
     emergency: boolean;
-    comment: string;
+    comment?: string;
 }
 
 ///SCREEN TYPES
