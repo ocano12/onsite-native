@@ -14,8 +14,9 @@ export const theme = {
         error: "#cc0000",
     },
     font: {
-        small: 8,
-        medium: 12,
+        xs: 8,
+        small: 12,
+        medium: 14,
         default: 16,
         large: 24,
         xlarge: 32,

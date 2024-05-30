@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { theme } from "../../styles/theme";
 
-export const SearchScreenStyles = StyleSheet.create({
+export const selectSiteStyles = StyleSheet.create({
     item: {
         flex: 1,
         flexDirection: "row",

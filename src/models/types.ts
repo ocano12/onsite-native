@@ -61,7 +61,7 @@ export interface CreateTicketForm {
 ///SCREEN TYPES
 
 export type CreateScreenStackProp = {
-    CreateTicket: { id: number }; // Replace 'YourScreenName' with the actual name of your screen
+    CreateTicket: { site: Site }; // Replace 'YourScreenName' with the actual name of your screen
 };
 
 export type CreateScreenRouteProp = RouteProp<CreateScreenStackProp, "CreateTicket">;

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { MyTabs } from "./TabsNavigator";
-import { SearchScreen } from "../screens/Search/SearchScreen";
+import { SelectSiteScreen } from "../screens/SelectSite/SelectSiteScreen";
 import { RootStackParamList } from "../models/types";
 
 export const StackNavigator = () => {
@@ -9,7 +9,7 @@ export const StackNavigator = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Main" component={MyTabs} />
-            <Stack.Screen name="Search" component={SearchScreen} />
+            <Stack.Screen name="Search" component={SelectSiteScreen} />
         </Stack.Navigator>
     );
 };
