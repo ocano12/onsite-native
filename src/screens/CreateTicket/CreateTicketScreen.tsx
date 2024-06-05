@@ -87,9 +87,6 @@ export const CreateTicketScreen: React.FC = () => {
         <ScreenContainer>
             <View style={{ flex: 1, padding: theme.space.small, justifyContent: "space-between" }}>
                 <View style={{ flex: 1, gap: theme.space.default }}>
-                    <View style={{ marginBottom: theme.space.xs }}>
-                        <OSText size="xlarge" fontWeight="bold" text="Create Ticket" lineHeight={50} />
-                    </View>
                     <View>
                         <OSText text="Site" size="medium" fontWeight="bold" />
                         <Controller name="siteName" control={control} render={({ field: { value } }) => <OSTextInput placeholder="Search Site" value={value} onFocus={handleSiteInputFocus} ref={siteInputRef} error={errors.siteName} />} />

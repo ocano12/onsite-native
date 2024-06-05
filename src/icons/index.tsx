@@ -1,5 +1,5 @@
-import Svg, { G, Path, Circle, Rect } from "react-native-svg";
-import { View } from "react-native";
+import Svg, { G, Path, Circle, Rect, Line } from "react-native-svg";
+import { Alert, View } from "react-native";
 import { getSize, SizeKey } from "../styles/theme";
 
 export interface IconsProps {
@@ -41,6 +41,15 @@ export const Icons = ({ name, fill, size = "default" }: IconsProps) => {
                 return (
                     <Svg width={getSize(size)} height={getSize(size)} viewBox="0 0 26 26" fill="none">
                         <Path d="M21 20H23V22H1V20H3V3C3 2.44772 3.44772 2 4 2H20C20.5523 2 21 2.44772 21 3V20ZM19 20V4H5V20H19ZM8 11H11V13H8V11ZM8 7H11V9H8V7ZM8 15H11V17H8V15ZM13 15H16V17H13V15ZM13 11H16V13H13V11ZM13 7H16V9H13V7Z" fill={fill} />
+                    </Svg>
+                );
+
+            case "plus":
+                return (
+                    <Svg enable-background="new 0 0 50 50" height={getSize(size)} viewBox="0 0 50 50" width={getSize(size)}>
+                        <Rect fill="none" height={getSize(size)} width={getSize(size)} />
+                        <Line fill="none" stroke={fill} strokeMiterlimit="10" strokeWidth="4" x1="9" x2="41" y1="25" y2="25" />
+                        <Line fill="none" stroke={fill} strokeMiterlimit="10" strokeWidth="4" x1="25" x2="25" y1="9" y2="41" />
                     </Svg>
                 );
 

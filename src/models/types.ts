@@ -46,7 +46,8 @@ export interface SearchData {
 }
 
 export type RootStackParamList = {
-    Main: undefined;
+    Tickets: undefined;
+    CreateTicket: undefined;
     Search: { data?: [] };
 };
 

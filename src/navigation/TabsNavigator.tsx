@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CreateTicketScreen, TicketScreen, SettingScreen } from "../screens";
+import { TicketStack } from "./StackNavigator";
+import { SettingScreen } from "../screens";
 import { Icons } from "../icons";
 
 const Tab = createBottomTabNavigator();
@@ -9,23 +10,16 @@ export const MyTabs = () => {
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen
                 options={{
-                    tabBarIcon: ({ color, size }) => <Icons name="home" fill={color} size="large" />,
-                }}
-                name="CreateTicket"
-                component={CreateTicketScreen}
-            />
-            <Tab.Screen
-                options={{
                     tabBarIcon: ({ color }) => <Icons name="ticket" fill={color} size="large" />,
                 }}
-                name="Ticket"
-                component={TicketScreen}
+                name="TicketTab"
+                component={TicketStack}
             />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ color }) => <Icons name="setting" fill={color} size="large" />,
                 }}
-                name="Setting"
+                name="SettingTab"
                 component={SettingScreen}
             />
         </Tab.Navigator>
